@@ -12,7 +12,7 @@
 using namespace std;
 
 /*
-	AUTOR : JESÚS BARÚJCAL 
+	AUTOR : JESÃšS BARÃšJCAL 
 */
 
 struct Usuario {
@@ -64,7 +64,7 @@ struct OrdenDeCompra {
     double total;
 };
 
-
+// Variables globales
 vector<Usuario> usuarios;
 vector<Producto> productos;
 vector<Comentario> comentarios;
@@ -74,14 +74,13 @@ vector<OrdenDeCompra> ordenes;
 int proximoIdCarrito = 1;
 int proximoIdOrden = 1;
 
-
+// Funciones de utilidad
 int toInt(string s) {
     stringstream ss(s);
     int x = 0;
     ss >> x;
     return x;
 }
-
 
 double toDouble(string s) {
     stringstream ss(s);
@@ -90,13 +89,11 @@ double toDouble(string s) {
     return x;
 }
 
-
 string trim(string s) {
     while (!s.empty() && isspace((unsigned char)s[0])) s.erase(0, 1);
     while (!s.empty() && isspace((unsigned char)s[s.size() - 1])) s.erase(s.size() - 1, 1);
     return s;
 }
-
 
 string aMayusculas(string texto) {
     for (size_t i = 0; i < texto.size(); i++) {
@@ -105,13 +102,11 @@ string aMayusculas(string texto) {
     return texto;
 }
 
-
 string enteroAString(int numero) {
     ostringstream ss;
     ss << numero;
     return ss.str();
 }
-
 
 double calcularSubtotal(const vector<ItemCarrito>& items) {
     double subtotal = 0.0;
@@ -120,7 +115,6 @@ double calcularSubtotal(const vector<ItemCarrito>& items) {
     }
     return subtotal;
 }
-
 
 Usuario* buscarUsuarioPorId(int id) {
     for (size_t i = 0; i < usuarios.size(); i++) {
@@ -140,7 +134,7 @@ Producto* buscarProductoPorId(int id) {
     return NULL;
 }
 
-
+// Carga de Archivos
 void cargarUsuarios() {
     ifstream file("datosusuarios.txt");
     if (!file.is_open()) {
@@ -148,7 +142,7 @@ void cargarUsuarios() {
         return;
     }
     string linea;
-    getline(file, linea); 
+    getline(file, linea); // Ignorar cabecera
 
     while (getline(file, linea)) {
         if (linea.empty()) continue;
@@ -176,6 +170,7 @@ void cargarProductos() {
         return;
     }
     string linea;
+    getline(file, linea); 
 
     while (getline(file, linea)) {
         if (linea.empty()) continue;
@@ -219,8 +214,7 @@ void cargarComentarios() {
     file.close();
 }
 
-void mostrarCatalogo() 
-{
+void mostrarCatalogo() {
     cout << "\n===== CATALOGO DE PRODUCTOS =====\n";
     cout << left << setw(4) << "ID" << setw(22) << "Nombre" << setw(12) << "Precio" << setw(7) << "Stock" << endl;
     cout << string(50, '-') << endl;
@@ -231,23 +225,19 @@ void mostrarCatalogo()
     }
 }
 
-int contarCarritosActivos(int idUsuario) 
-{
+int contarCarritosActivos(int idUsuario) {
     int cnt = 0;
     for (size_t i = 0; i < carritosGlobales.size(); i++) {
-        if (carritosGlobales[i].idUsuario == idUsuario && !carritosGlobales[i].pagado) 
-		{
+        if (carritosGlobales[i].idUsuario == idUsuario && !carritosGlobales[i].pagado) {
             cnt++;
         }
     }
     return cnt;
 }
 
-int buscarCarritoPorIdYUsuario(int idCarrito, int idUsuario) 
-{
+int buscarCarritoPorIdYUsuario(int idCarrito, int idUsuario) {
     for (size_t i = 0; i < carritosGlobales.size(); i++) {
-        if (carritosGlobales[i].idCarrito == idCarrito && carritosGlobales[i].idUsuario == idUsuario) 
-		{
+        if (carritosGlobales[i].idCarrito == idCarrito && carritosGlobales[i].idUsuario == idUsuario) {
             return (int)i;
         }
     }
@@ -379,7 +369,6 @@ void agregarAlCarrito(int idCarrito, int idUsuario) {
     cout << "[+] Producto agregado correctamente al carrito.\n";
 }
 
-
 void generarOrdenTxt(const OrdenDeCompra& o) {
     ostringstream nombreArchivo;
     nombreArchivo << "orden_" << o.idOrden << "_usuario_" << o.usuario.idUsuario << ".txt";
@@ -448,7 +437,7 @@ void pagarCarrito(int idCarrito, int idUsuario) {
     if (u->tieneBono50) {
         o.descuentoBono = o.subtotal * 0.5;
         u->tieneBono50 = false; 
-        cout << "[PROMO] ¡Bono del 50% de descuento aplicado con exito a esta compra!\n";
+        cout << "[PROMO] Â¡Bono del 50% de descuento aplicado con exito a esta compra!\n";
     } else {
         o.descuentoBono = 0.0;
     }
@@ -506,75 +495,55 @@ void listarProductosMasVendidos() {
 }
 
 void reporteComentariosPorFecha() {
-
     string fechaBuscar;
-
     cout << "\nIngrese la fecha (AAAA-MM-DD): ";
     cin >> fechaBuscar;
 
     int contador = 0;
-
     for (size_t i = 0; i < comentarios.size(); i++) {
-
         if (comentarios[i].fecha == fechaBuscar) {
             contador++;
         }
     }
 
     cout << "\n===== REPORTE DE COMENTARIOS =====\n";
-
-    cout << left
-         << setw(20) << "Fecha"
-         << setw(20) << "Cantidad" << endl;
-
+    cout << left << setw(20) << "Fecha" << setw(20) << "Cantidad" << endl;
     cout << string(40, '-') << endl;
-
-    cout << left
-         << setw(20) << fechaBuscar
-         << setw(20) << contador << endl;
+    cout << left << setw(20) << fechaBuscar << setw(20) << contador << endl;
 }
-void reportePrecioMaximoMinimo() 
-{
 
+void reportePrecioMaximoMinimo() {
     if (productos.empty()) {
-
         cout << "No existen productos cargados.\n";
         return;
     }
 
     double precioMax = productos[0].precio;
     double precioMin = productos[0].precio;
-
     string nombreMax = productos[0].nombre;
     string nombreMin = productos[0].nombre;
 
     for (size_t i = 1; i < productos.size(); i++) {
-
         if (productos[i].precio > precioMax) {
-
             precioMax = productos[i].precio;
             nombreMax = productos[i].nombre;
         }
-		
         if (productos[i].precio < precioMin) {
-
             precioMin = productos[i].precio;
             nombreMin = productos[i].nombre;
         }
     }
 
     cout << "\n===== PRECIO MAXIMO Y MINIMO =====\n";
-
     cout << "\nProducto con PRECIO MAXIMO\n";
     cout << "Nombre : " << nombreMax << endl;
-    cout << "Precio : $" << fixed << setprecision(2)
-         << precioMax << endl;
+    cout << "Precio : $" << fixed << setprecision(2) << precioMax << endl;
 
     cout << "\nProducto con PRECIO MINIMO\n";
     cout << "Nombre : " << nombreMin << endl;
-    cout << "Precio : $" << fixed << setprecision(2)
-         << precioMin << endl;
+    cout << "Precio : $" << fixed << setprecision(2) << precioMin << endl;
 }
+
 void moduloGananciasYBonos() {
     cout << "\n===== MODULO DE GANANCIAS Y BONOS =====\n";
     
@@ -609,9 +578,8 @@ void moduloGananciasYBonos() {
                     u->tieneBono50 = true;
                     cout << " -> [BONO ASIGNADO] La Orden #" << ordenes[i].idOrden 
                          << " de " << u->nombre << " (Total: $" << ordenes[i].total 
-                         << ") supero el valor X. ¡Se le otorgo 50% de descuento para su proximo carro!\n";
-                } else 
-				{
+                         << ") supero el valor X. Â¡Se le otorgo 50% de descuento para su proximo carro!\n";
+                } else {
                     cout << " -> [INFO] El usuario " << u->nombre << " ya cuenta con un bono activo.\n";
                 }
             }
@@ -622,35 +590,6 @@ void moduloGananciasYBonos() {
         cout << "Ninguna orden de compra registrada ha superado el valor de $" << x << ".\n";
     }
 }
- 
-/* void reporteCincoProductosMenorStock() {
-
-    cout << "\n===== 5 PRODUCTOS CON MENOR STOCK =====\n";
-
-    vector<Producto> copia = productos;
-
-    sort (copia.begin(), copia.end(), [](const Producto& a, const Producto& b) 
-		{
-            return a.stock < b.stock;
-        });
-
-    cout << left
-         << setw(12) << "ID"
-         << setw(25) << "Nombre"
-         << setw(10) << "Stock" << endl;
-
-    cout << string(50, '-') << endl;
-
-    int limite = (copia.size() < 5) ? copia.size() : 5;
-
-    for (int i = 0; i < limite; i++) {
-        cout << left
-             << setw(12) << copia[i].idProducto
-             << setw(25) << copia[i].nombre
-             << setw(10) << copia[i].stock
-             << endl;
-    }
-}*/
 
 int login() {
     string correo, clave;
@@ -697,44 +636,33 @@ void menuCarrito(int idUsuario) {
         else if (opcion == 4) { int idC; cout << "Numero de carrito a pagar: "; cin >> idC; pagarCarrito(idC, idUsuario); }
     } while (opcion != 0);
 }
+
 void menuReportes() {
-
     int opcion;
-
     do {
-
         cout << "\n===== MENU DE REPORTES =====\n";
         cout << "1. Productos mas vendidos\n";
-        cout << "2. 5 productos con menor stock\n";
-        cout << "3. Cantidad de comentarios por fecha\n";
-        cout << "4. Precio maximo y minimo de productos\n";
+        cout << "2. Cantidad de comentarios por fecha\n";
+        cout << "3. Precio maximo y minimo de productos\n";
         cout << "0. Volver\n";
         cout << "Opcion: ";
         cin >> opcion;
 
         switch(opcion) {
-
             case 1:
                 listarProductosMasVendidos();
                 break;
-
             case 2:
-               // reporteCincoProductosMenorStock();
-                break;
-
-            case 3:
                 reporteComentariosPorFecha();
                 break;
-
-            case 4:
+            case 3:
                 reportePrecioMaximoMinimo();
                 break;
         }
-
     } while(opcion != 0);
 }
-void menuPrincipal() 
-{
+
+void menuPrincipal(int idUsuarioLogueado) {
     int opcion;
     do {
         cout << "\n========== TIENDA ONLINE ==========\n";
@@ -747,33 +675,24 @@ void menuPrincipal()
         cout << "Opcion: "; cin >> opcion;
 
         if (opcion == 1) {
-            cout << "\n--- SELECCIONAR USUARIO DE SESION ---\n";
-            for (size_t i = 0; i < usuarios.size(); i++) {
-                cout << "  [" << usuarios[i].idUsuario << "] " << usuarios[i].nombre << endl;
-            }
-            cout << "ID de usuario para operar: "; int id; cin >> id;
-            if(buscarUsuarioPorId(id) != NULL) {
-                menuCarrito(id);
-            } else {
-                cout << "[!] ID Invalido.\n";
-            }
+            // Se ingresa directamente con el usuario que se logueÃ³ al inicio
+            menuCarrito(idUsuarioLogueado);
         }
         else if (opcion == 2) { mostrarCatalogo(); }
-        else if (opcion == 3) {menuReportes(); }
+        else if (opcion == 3) { menuReportes(); }
         else if (opcion == 4) { listarStockBajo(); }
         else if (opcion == 5) { moduloGananciasYBonos(); }
     } while (opcion != 0);
 }
 
 int main() {
-    
     setlocale(LC_ALL, ""); 
 
     cargarUsuarios();
     cargarProductos();
     cargarComentarios();
 
-    cout << "===== INICIO DE SESION AUTENTICADO =====\n";
+    cout << "===== INICIO DE SESION =====\n";
     int idUsuario = login();
 
     if (idUsuario == -1) {
@@ -782,7 +701,8 @@ int main() {
     }
 
     cout << "\nInicio de sesion exitoso.\n";
-    menuPrincipal();
+    // Pasamos el ID verificado para proteger el flujo del programa
+    menuPrincipal(idUsuario);
 
     cout << "\nHasta pronto!\n";
     return 0;
